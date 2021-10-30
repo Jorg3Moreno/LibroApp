@@ -1,0 +1,40 @@
+application {
+  config {
+    baseName cobis
+    packageName ec.prueba.cobiscorp
+    applicationType monolith
+    buildTool maven
+    clientFramework angularX
+    databaseType sql
+    devDatabaseType mssql
+    prodDatabaseType mssql
+    enableHibernateCache false
+    enableSwaggerCodegen false
+    jhiPrefix cobis
+    nativeLanguage es
+    skipUserManagement true
+  }
+  entities Libro
+  dto * with mapstruct
+}
+
+entity Libro {
+	nombre String maxlength(150) unique,
+    descripcion String maxlength(300),
+    autor String maxlength(150),
+    fechaPublicacion Instant,
+    numeroEjemplares Integer,
+    costo BigDecimal,
+}
+
+// Set pagination options
+paginate Libro with pagination
+
+// Set service options to all except few
+service * with serviceImpl
+
+// Set an angular suffix
+angularSuffix * with cobis
+
+// filters
+filter Libro

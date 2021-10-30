@@ -1,0 +1,52 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="libro">
+      <h2 data-cy="libroDetailsHeading"><span cobisTranslate="cobisApp.libro.detail.title">Libro</span></h2>
+
+      <hr />
+
+      <cobis-alert-error></cobis-alert-error>
+
+      <cobis-alert></cobis-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span cobisTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ libro.id }}</span>
+        </dd>
+        <dt><span cobisTranslate="cobisApp.libro.nombre">Nombre</span></dt>
+        <dd>
+          <span>{{ libro.nombre }}</span>
+        </dd>
+        <dt><span cobisTranslate="cobisApp.libro.descripcion">Descripcion</span></dt>
+        <dd>
+          <span>{{ libro.descripcion }}</span>
+        </dd>
+        <dt><span cobisTranslate="cobisApp.libro.autor">Autor</span></dt>
+        <dd>
+          <span>{{ libro.autor }}</span>
+        </dd>
+        <dt><span cobisTranslate="cobisApp.libro.fechaPublicacion">Fecha Publicacion</span></dt>
+        <dd>
+          <span>{{ libro.fechaPublicacion | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span cobisTranslate="cobisApp.libro.numeroEjemplares">Numero Ejemplares</span></dt>
+        <dd>
+          <span>{{ libro.numeroEjemplares }}</span>
+        </dd>
+        <dt><span cobisTranslate="cobisApp.libro.costo">Costo</span></dt>
+        <dd>
+          <span>{{ libro.costo }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span cobisTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/', libro.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span cobisTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

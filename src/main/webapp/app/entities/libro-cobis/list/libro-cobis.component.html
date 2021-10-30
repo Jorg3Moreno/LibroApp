@@ -1,0 +1,131 @@
+<div>
+  <h2 id="page-heading" data-cy="LibroHeading">
+    <span cobisTranslate="cobisApp.libro.home.title">Libros</span>
+
+    <div class="row justify-content-end">
+      <div class="d-flex justify-content-end">
+        <select class="form-control" #campoSelect>
+          <option [ngValue]="null">campo...</option>
+          <option [ngValue]="campo" *ngFor="let campo of fields">{{ campo }}</option>
+        </select>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <select class="form-control" #operatorSelect>
+          <option [ngValue]="null">operación...</option>
+          <option [ngValue]="campo" *ngFor="let campo of operators">{{ campo }}</option>
+        </select>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <input placeholder="Buscar..." type="text" class="form-control" #search />
+        <button
+          class="btn btn-info mr-2"
+          (click)="searchByCriteria(campoSelect.value, operatorSelect.value, search.value)"
+          [disabled]="isLoading"
+        >
+          <fa-icon icon="search" [spin]="isLoading"></fa-icon>
+        </button>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
+          <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+          <span cobisTranslate="cobisApp.libro.home.refreshListLabel">Refresh List</span>
+        </button>
+
+        <button
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary jh-create-entity create-libro-cobis"
+          [routerLink]="['new']"
+        >
+          <fa-icon icon="plus"></fa-icon>
+          <span cobisTranslate="cobisApp.libro.home.createLabel"> Create a new Libro </span>
+        </button>
+      </div>
+    </div>
+  </h2>
+
+  <cobis-alert-error></cobis-alert-error>
+
+  <cobis-alert></cobis-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="libros?.length === 0">
+    <span cobisTranslate="cobisApp.libro.home.notFound">No libros found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="libros && libros.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr cobisSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th scope="col" cobisSortBy="id"><span cobisTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" cobisSortBy="nombre">
+            <span cobisTranslate="cobisApp.libro.nombre">Nombre</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" cobisSortBy="descripcion">
+            <span cobisTranslate="cobisApp.libro.descripcion">Descripcion</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" cobisSortBy="autor"><span cobisTranslate="cobisApp.libro.autor">Autor</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" cobisSortBy="fechaPublicacion">
+            <span cobisTranslate="cobisApp.libro.fechaPublicacion">Fecha Publicacion</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" cobisSortBy="numeroEjemplares">
+            <span cobisTranslate="cobisApp.libro.numeroEjemplares">Numero Ejemplares</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" cobisSortBy="costo"><span cobisTranslate="cobisApp.libro.costo">Costo</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let libro of libros; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/', libro.id, 'view']">{{ libro.id }}</a>
+          </td>
+          <td>{{ libro.nombre }}</td>
+          <td>{{ libro.descripcion }}</td>
+          <td>{{ libro.autor }}</td>
+          <td>{{ libro.fechaPublicacion | formatMediumDatetime }}</td>
+          <td>{{ libro.numeroEjemplares }}</td>
+          <td>{{ libro.costo }}</td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button type="submit" [routerLink]="['/', libro.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" cobisTranslate="entity.action.view">View</span>
+              </button>
+
+              <button type="submit" [routerLink]="['/', libro.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" cobisTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(libro)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" cobisTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="libros && libros.length > 0">
+    <div class="row justify-content-center">
+      <cobis-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></cobis-item-count>
+    </div>
+
+    <div class="row justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [(page)]="ngbPaginationPage"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="loadPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>
