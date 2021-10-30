@@ -7,6 +7,10 @@ Los directorios de Backend y Fronted se encuentran respectivamente en las siguie
 
 `src/main/webapp`
 
+El codigo con la lógica del negocio se encuentra en:
+
+`src/main/webapp/app/entities`
+
 ## Requisitos
 
 - Java 8

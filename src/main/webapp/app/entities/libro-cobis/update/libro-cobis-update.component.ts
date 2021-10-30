@@ -10,6 +10,7 @@ import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 
 import { ILibroCobis, LibroCobis } from '../libro-cobis.model';
 import { LibroCobisService } from '../service/libro-cobis.service';
+import { AlertService } from '../../../core/util/alert.service';
 
 @Component({
   selector: 'cobis-libro-cobis-update',
@@ -32,7 +33,8 @@ export class LibroCobisUpdateComponent implements OnInit {
     protected libroService: LibroCobisService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    protected alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -53,10 +55,37 @@ export class LibroCobisUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const libro = this.createFromForm();
-    if (libro.id !== undefined) {
-      this.subscribeToSaveResponse(this.libroService.update(libro));
+
+    const age = this.getAge(libro.fechaPublicacion?.format('YYYY/MM/DD'));
+
+    if (age > 10) {
+      this.router.navigate(['/']);
+      this.alertService.addAlert({
+        type: 'danger',
+        message: 'La fecha de publicación es mayor a 10 años',
+        timeout: 6000,
+      });
     } else {
-      this.subscribeToSaveResponse(this.libroService.create(libro));
+      if (libro.id !== undefined) {
+        this.subscribeToSaveResponse(this.libroService.update(libro));
+      } else {
+        this.subscribeToSaveResponse(this.libroService.create(libro));
+      }
+    }
+  }
+
+  getAge(dateString: string | undefined): number {
+    if (dateString) {
+      const today = new Date();
+      const birthDate = new Date(dateString);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    } else {
+      return 0;
     }
   }
 
